@@ -283,6 +283,50 @@ class App:
         print("--- ⭕ Class Filtering ")
         print("--- 0️⃣ N. Classes Start         ---> {}".format(self.numClasses))
 
+        # Initialize lists for libraries and system libraries
+        libraries = []
+        systemLibraries = []
+
+        # Read Libraries if libsFile is provided
+        with open(LIBRARIES_PATH, "r") as file:
+            libraries = [line.strip() for line in file.readlines()]
+
+        with open(SYSTEMS_PATH, "r") as file:
+            systemLibraries = [line.strip() for line in file.readlines()]
+
+        # System Libraries filtering
+        if systemLibraries:
+            filteredClasses = []
+            for smaliClass in self.smaliCodeClasses[:]:
+                className = smaliClass["className"]
+                if not any(className.startswith(sysLib) for sysLib in systemLibraries):
+                    filteredClasses.append(smaliClass)
+
+            self.smaliCodeClasses = filteredClasses
+            self.numClasses = len(self.smaliCodeClasses)
+            print("--- 1️⃣ Filtering System Libs    ---> {}".format(self.numClasses))
+
+        # 2 Third-party Libraries filtering
+        if libraries:
+            filteredClasses = []
+            for smaliClass in self.smaliCodeClasses[:]:
+                className = smaliClass["className"]
+                if not any(className.startswith(lin) for lin in libraries):
+                    filteredClasses.append(smaliClass)
+
+            # Update self.smaliCodeClasses with the filtered list for libraries
+            self.smaliCodeClasses = filteredClasses
+            self.numClasses = len(self.smaliCodeClasses)
+
+            print("--- 2️⃣ Filtering 3rd-pary Libs  ---> {}".format(self.numClasses))
+
+        # Recreate the methods.
+        self.getSmaliMethods()
+
+    def filterSmaliClassesMainPackageName(self):
+        print("--- ⭕ Class Filtering Main Package Name ")
+        print("--- 0️⃣ N. Classes Start         ---> {}".format(self.numClasses))
+
         # 0) Filtra per package name principale
         main_pkg = self._get_main_package_name()
         if main_pkg:
