@@ -5,5 +5,7 @@ from AppUtils import App
 
 app = App("/Users/lucaferrari/Desktop/MASTG-TEST0013.apk")
 app.extract()
+app.getSmaliMethods()
 app.filterSmaliClasses()
+app.filterSmaliClassesMainPackageName()
 print(app)
